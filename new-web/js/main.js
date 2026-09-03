@@ -3,9 +3,9 @@
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   history.scrollRestoration = 'manual';
-  scrollTo(0,0);
+  window.scrollTo(0,0);
 
-  var IMG = '../img/';
+  var IMG = 'img/';
 
   var PROJECTS = [
     { idx:'01', title:'MARKETING PRO', cat:'MARKETING LANDING', tag:'REACT / PHP', year:'2025',
@@ -53,24 +53,20 @@
       + '</article>';
   }).join('');
 
-  var lenis = null;
-  if (!reduced && typeof Lenis !== 'undefined') {
-    lenis = new Lenis({ duration: 1.15, smoothWheel: true });
-    lenis.stop();
-    (function raf(t){ lenis.raf(t); requestAnimationFrame(raf); })(0);
-  }
+  var scrollingLocked = true;
   function goTo(sel){
-    if (sel === 'top') { lenis ? lenis.scrollTo(0) : scrollTo({top:0, behavior:'smooth'}); return; }
+    if (sel === 'top') { window.scrollTo({top:0, behavior:'smooth'}); return; }
     var t = document.querySelector(sel);
     if (!t) return;
-    lenis ? lenis.scrollTo(t, {offset:0}) : t.scrollIntoView({behavior:'smooth'});
+    t.scrollIntoView({behavior:'smooth', block:'start'});
   }
 
   var countEl = document.getElementById('loaderCount');
   var barEl = document.getElementById('loaderBar');
   function finishLoad(){
     document.body.classList.add('loaded');
-    if (lenis) lenis.start();
+    scrollingLocked = false;
+    document.documentElement.style.scrollBehavior = 'smooth';
     setTimeout(function(){ PROJECTS.forEach(function(p){ var im = new Image(); im.src = previewSrc(PROJECTS.indexOf(p)); }); }, 1500);
   }
   if (reduced) { countEl.textContent = '100'; finishLoad(); }
@@ -149,7 +145,8 @@
     menuOpen = open;
     document.body.classList.toggle('menu-open', open);
     document.getElementById('menu').setAttribute('aria-hidden', String(!open));
-    if (lenis) open ? lenis.stop() : lenis.start();
+    scrollingLocked = open;
+    document.documentElement.style.overflow = open ? 'hidden' : '';
   }
   document.getElementById('burger').addEventListener('click', function(){ setMenu(true); });
   document.getElementById('menuClose').addEventListener('click', function(){ setMenu(false); });
@@ -192,12 +189,12 @@
     cur = i; fill(i);
     ov.classList.add('open'); ov.setAttribute('aria-hidden','false');
     ov.scrollTop = 0;
-    if (lenis) lenis.stop();
+    document.documentElement.style.overflow = 'hidden';
     preview.classList.remove('show');
   }
   function closeProject(){
     ov.classList.remove('open'); ov.setAttribute('aria-hidden','true');
-    if (lenis && !menuOpen) lenis.start();
+    if (!menuOpen) document.documentElement.style.overflow = '';
   }
   document.getElementById('ovClose').addEventListener('click', closeProject);
   document.getElementById('ovNext').addEventListener('click', function(){
