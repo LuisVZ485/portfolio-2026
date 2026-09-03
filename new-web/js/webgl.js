@@ -1,6 +1,6 @@
 /* ============ KINETIC SCULPTURE — custom GLSL blob + gyroscope rings ============ */
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
 const container = document.getElementById('fig3d');
 const canvas = document.getElementById('gl');
@@ -235,3 +235,4 @@ function tick(){
   renderer.render(scene, camera);
 }
 tick();
+
